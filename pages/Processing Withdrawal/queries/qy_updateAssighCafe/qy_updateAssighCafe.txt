@@ -1,0 +1,3 @@
+UPDATE transactions_wd
+SET assign = {{ table_WDRequest.updatedRow.assign }}
+WHERE voucher = {{ table_WDRequest.updatedRow.voucher }};

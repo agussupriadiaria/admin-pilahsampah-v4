@@ -1,0 +1,78 @@
+START TRANSACTION;
+
+-- 1. Masukkan data yang cocok ke transactions_success 
+--    lalu set inject = '1' di tabel tujuan
+INSERT INTO transactions_success (user_id, user_name, transactioncode, transactiondate, amount, status, inputdate)
+SELECT t.user_id, t.user_name, t.transactioncode, t.transactiondate, s.saldo, 'Success', t.inputdate
+FROM transactions t
+JOIN savedatabaru s
+  ON t.transactioncode = s.transactioncode 
+ AND t.transactiondate = s.transactiondate
+WHERE NOT EXISTS (
+	SELECT 1 
+	FROM transactions_success ts
+	WHERE ts.transactioncode = t.transactioncode
+	AND ts.transactiondate = t.transactiondate
+);
+
+-- 2. Masukkan data ke transactions_invalid
+--    Status = 'used' jika sudah ada di transactions_success
+--    Status = 'Invalid' jika tidak match di savedatabaru
+INSERT INTO transactions_invalid (user_id, user_name, transactioncode, transactiondate, status, inputdate)
+SELECT 
+    t.user_id,
+    t.user_name,
+    t.transactioncode,
+    t.transactiondate,
+    CASE
+        WHEN EXISTS (
+					SELECT 1 
+					FROM transactions_success ts
+					WHERE ts.transactioncode = t.transactioncode
+					AND ts.transactiondate = t.transactiondate
+				) THEN 'used'
+        ELSE 'Invalid'
+    END AS status,
+    t.inputdate
+FROM transactions t
+WHERE NOT EXISTS (
+	SELECT 1 
+	FROM savedatabaru s
+	WHERE s.transactioncode = t.transactioncode
+	AND s.transactiondate = t.transactiondate
+)
+   OR EXISTS (
+		 SELECT 1 
+		 FROM transactions_success ts
+		 WHERE ts.transactioncode = t.transactioncode
+		 AND ts.transactiondate = t.transactiondate
+	 );
+
+-- 3. Hapus data yang cocok dari savedatabaru
+DELETE FROM savedatabaru
+WHERE EXISTS (
+	SELECT 1
+	FROM transactions t
+	WHERE t.transactioncode = savedatabaru.transactioncode
+	AND t.transactiondate = savedatabaru.transactiondate
+);
+
+-- 4. Hapus data yang cocok dari transactions
+DELETE FROM transactions
+WHERE EXISTS (
+	SELECT 1
+	FROM savedatabaru s
+	WHERE s.transactioncode = transactions.transactioncode
+	AND s.transactiondate = transactions.transactiondate
+);
+
+-- 5. Hapus data yang tidak cocok dari transactions
+DELETE FROM transactions
+WHERE NOT EXISTS (
+	SELECT 1
+	FROM savedatabaru s
+	WHERE s.transactioncode = transactions.transactioncode
+	AND s.transactiondate = transactions.transactiondate
+);
+
+COMMIT;

@@ -1,0 +1,9 @@
+INSERT INTO savedata (
+	 transactiondate, jumlahbottle, saldo, transactioncode
+)
+VALUES (
+	{{this.params.transactiondate}},
+	{{this.params.jumlahbottle}},
+	{{this.params.saldo}},
+	{{this.params.transactioncode}}
+);

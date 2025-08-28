@@ -1,0 +1,4 @@
+SELECT
+  transactiondate, jumlahbottle, saldo, transactioncode
+FROM
+  savedatabaru

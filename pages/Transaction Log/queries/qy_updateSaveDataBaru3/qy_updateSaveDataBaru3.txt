@@ -1,0 +1,15 @@
+USE u682594628_pilahsampah_db;
+INSERT INTO savedatabaru (transactiondate, jumlahbottle, saldo, transactioncode)
+SELECT sd.transactiondate, sd.jumlahbottle, sd.saldo, sd.transactioncode
+FROM savedata AS sd
+WHERE (sd.transactioncode, sd.saldo) IN (
+	SELECT transactioncode, MAX(saldo)
+	FROM savedata
+	GROUP BY transactioncode
+)
+AND sd.transactioncode NOT IN (
+	SELECT transactioncode
+	FROM savedatabaru
+);
+
+TRUNCATE savedata;

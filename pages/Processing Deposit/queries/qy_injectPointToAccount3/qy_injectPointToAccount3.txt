@@ -1,0 +1,14 @@
+-- Update point user berdasarkan transaksi yang inject = 0
+UPDATE wp_users u
+JOIN (
+    SELECT user_id, SUM(amount) AS total_amount
+    FROM transactions_success
+    WHERE inject = 0
+    GROUP BY user_id
+) t ON u.ID = t.user_id
+SET u.point = u.point + t.total_amount;
+
+-- Tandai transaksi sudah diproses
+UPDATE transactions_success
+SET inject = 1
+WHERE inject = 0;

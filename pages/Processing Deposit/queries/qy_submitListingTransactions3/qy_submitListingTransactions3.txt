@@ -1,0 +1,38 @@
+START TRANSACTION;
+
+-- Buat temporary table untuk simpan hasil grouping
+CREATE TEMPORARY TABLE tmp_grouped AS
+SELECT 
+    entry_id,
+    MAX(CASE WHEN meta_key = 'number-1' THEN meta_value END) AS number1,
+    STR_TO_DATE(
+			MAX(CASE WHEN meta_key = 'date-1' THEN meta_value END),
+			'%d/%m/%Y'
+		) AS transaction_date,
+    MAX(CASE WHEN meta_key = 'hidden-1' THEN meta_value END) AS user_id,
+    MAX(CASE WHEN meta_key = 'hidden-2' THEN meta_value END) AS user_name,
+    MAX(CASE WHEN meta_key = 'hidden-3' THEN meta_value END) AS transaction_type,
+    MIN(date_created) AS inputdate
+FROM wp_frmt_form_entry_meta
+GROUP BY entry_id;
+
+-- Insert ke transactions
+INSERT INTO transactions (transactioncode, transactiondate, user_id, user_name, inputdate)
+SELECT 
+    number1,
+    transaction_date,
+    user_id,
+    user_name,
+    inputdate
+FROM tmp_grouped
+WHERE transaction_type = 'Transactions';
+
+-- Hapus data yang sudah dipindahkan (hanya yang Transactions)
+DELETE FROM wp_frmt_form_entry_meta
+WHERE entry_id IN (
+	SELECT entry_id 
+	FROM tmp_grouped 
+	WHERE transaction_type = 'Transactions'
+);
+
+COMMIT;

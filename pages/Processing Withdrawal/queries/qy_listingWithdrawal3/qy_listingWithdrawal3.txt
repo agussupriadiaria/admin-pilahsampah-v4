@@ -1,0 +1,12 @@
+SELECT 
+    e.entry_id,
+    MAX(CASE WHEN e.meta_key = 'hidden-1' THEN e.meta_value END) AS user_id,
+    MAX(CASE WHEN e.meta_key = 'number-1' THEN e.meta_value END) AS point,
+    MAX(e.date_created) AS date_created,
+    MAX(CASE WHEN e.meta_key = 'hidden-2' THEN e.meta_value END) AS username,
+    MAX(CASE WHEN e.meta_key = 'hidden-3' THEN e.meta_value END) AS transaction_type,
+    MAX(CASE WHEN e.meta_key = '_forminator_user_ip' THEN e.meta_value END) AS user_ip
+FROM wp_frmt_form_entry_meta e
+GROUP BY e.entry_id
+HAVING transaction_type = 'Withdrawal'
+ORDER BY e.entry_id;

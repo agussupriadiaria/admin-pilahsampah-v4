@@ -1,0 +1,7 @@
+SELECT
+	ID,
+	user_login,
+	user_registered,
+	display_name,
+	point
+FROM wp_users

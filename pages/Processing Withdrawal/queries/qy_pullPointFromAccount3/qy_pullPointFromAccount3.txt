@@ -1,0 +1,28 @@
+-- 1) Jika point cukup: kurangi point + ubah transaksi Verify jadi Success
+UPDATE wp_users u
+JOIN (
+	SELECT user_id, SUM(amount) AS total_amount
+	FROM transactions_wd
+	WHERE status = 'Verify'
+	GROUP BY user_id
+) t ON u.ID = t.user_id
+JOIN transactions_wd tw ON tw.user_id = u.ID AND tw.status = 'Verify'
+SET u.point = u.point - t.total_amount,
+    tw.status = 'Success'
+WHERE u.point >= t.total_amount;
+
+-- 2) Jika point tidak cukup: ubah transaksi Verify jadi Insufficient
+UPDATE transactions_wd tw
+JOIN (
+	SELECT u.ID AS user_id
+	FROM wp_users u
+	JOIN (
+		SELECT user_id, SUM(amount) AS total_amount
+		FROM transactions_wd
+		WHERE status = 'Verify'
+		GROUP BY user_id
+	) t ON u.ID = t.user_id
+	WHERE u.point < t.total_amount
+) x ON tw.user_id = x.user_id
+SET tw.status = 'Insufficient', tw.voucher = 'Insufficient'
+WHERE tw.status = 'Verify';

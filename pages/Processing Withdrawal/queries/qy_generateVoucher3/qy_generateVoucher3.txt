@@ -1,0 +1,9 @@
+UPDATE transactions_wd
+SET voucher = CONCAT(
+        ELT(FLOOR(1 + (RAND() * 3)), 'cafe1','cafe2'),
+        LPAD(FLOOR(RAND() * 10000), 4, '0'),
+        CHAR(FLOOR(65 + (RAND() * 26))),
+        CHAR(FLOOR(65 + (RAND() * 26)))
+    )
+WHERE status = 'Success'
+  AND (voucher IS NULL OR voucher = '');
