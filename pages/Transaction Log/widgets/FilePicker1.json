@@ -1,7 +1,5 @@
 {
-  "allowedFileTypes": [
-    "text/*"
-  ],
+  "allowedFileTypes": [],
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "bottomRow": 24,
