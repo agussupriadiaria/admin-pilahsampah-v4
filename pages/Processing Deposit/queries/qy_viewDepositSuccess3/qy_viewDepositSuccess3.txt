@@ -1,4 +1,6 @@
 SELECT
-  user_id, user_name, transactioncode, transactiondate, amount, status, inject, inputdate
+  no, user_id, user_name, transactioncode, transactiondate, amount, status, inject, inputdate
 FROM
   transactions_success
+	ORDER BY
+  no DESC;

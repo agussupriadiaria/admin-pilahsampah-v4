@@ -5,7 +5,7 @@
   "pluginType": "DB",
   "unpublishedAction": {
     "actionConfiguration": {
-      "body": "SELECT\n  user_id, user_name, transactioncode, transactiondate, amount, status, inject, inputdate\nFROM\n  transactions_success",
+      "body": "SELECT\n  no, user_id, user_name, transactioncode, transactiondate, amount, status, inject, inputdate\nFROM\n  transactions_success\n\tORDER BY\n  no DESC;",
       "encodeParamsToggle": true,
       "paginationType": "NONE",
       "pluginSpecifiedTemplates": [
