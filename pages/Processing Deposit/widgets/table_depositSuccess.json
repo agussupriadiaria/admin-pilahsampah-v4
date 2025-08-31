@@ -184,7 +184,7 @@
       "allowSameOptionsInNewRow": true,
       "buttonStyle": "rgb(3, 179, 101)",
       "columnType": "text",
-      "computedValue": "{{(() => { const tableData = table_depositSuccess.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (currentIndex+1)) : currentIndex+1 })()}}",
+      "computedValue": "{{(() => { const tableData = table_depositSuccess.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (currentIndex)) : currentIndex })()}}",
       "currencyCode": "USD",
       "decimals": 0,
       "enableFilter": true,

@@ -1,4 +1,6 @@
 SELECT
-  user_id, user_name, transactioncode, transactiondate, status, inputdate
+  no, user_id, user_name, transactioncode, transactiondate, status, inputdate
 FROM
   transactions_invalid
+ORDER BY
+  no DESC;
